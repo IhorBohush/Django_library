@@ -47,7 +47,11 @@ function ReadersList() {
   const fetchProfessions = async () => {
     try {
       const res = await axiosInstance.get("/professions/");
-      setProfessions(res.data);
+      setProfessions(
+        Array.isArray(res.data.professions)
+        ? res.data.professions
+        : []
+    );
     } catch (error) {
       console.error(error);
     }

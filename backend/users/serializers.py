@@ -31,6 +31,7 @@ class CreateLibrarianSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['role'] = RoleChoices.LIBRARIAN
         validated_data['is_active'] = True
+        validated_data['pending_password_setup'] = False
         return User.objects.create_user(**validated_data)
 
 
@@ -287,5 +288,9 @@ class LibrariansListSerializer(serializers.ModelSerializer):
             'id',
             'first_name', 
             'last_name', 
-            'middle_name'
+            'middle_name',
+            'email',
+            'phone_number',
+            'created_at',
+            'updated_at'
         ]

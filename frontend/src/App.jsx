@@ -17,6 +17,7 @@ import ReadersList from "./pages/ReadersList";
 import ReaderDetail from "./pages/ReaderDetail";
 import ReaderUpdate from "./pages/ReaderUpdate";
 import SetupPassword from "./pages/SetupPassword";
+import LibrarianUpdate from "./pages/LibrarianUpdate";
 
 function App() {
   return (
@@ -49,7 +50,7 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/librarians" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles="superuser">
             <LibrariansList />
           </ProtectedRoute>
         } />
@@ -70,6 +71,11 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/setup-password/:uidb64/:token/" element={<SetupPassword />} />
+        <Route path="/librarians/:id/update" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <LibrarianUpdate />
+          </ProtectedRoute>
+        } />
       </Routes>
       </main>
       <Footer />

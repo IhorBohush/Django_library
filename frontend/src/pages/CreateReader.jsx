@@ -14,6 +14,8 @@ function CreateReader() {
     graduation_date: ""
   });
 
+  const [user, setUser] = useState(null);
+
   const [professions, setProfessions] = useState([]);
   const [actorChoices, setActorChoices] = useState([]);
 
@@ -21,7 +23,11 @@ function CreateReader() {
   const fetchProfessions = async () => {
     try {
       const response = await axiosInstance.get("/professions/");
-      setProfessions(response.data);
+      setProfessions(
+        Array.isArray(response.data.professions)
+        ? response.data.professions
+        : []
+    );
     } catch (error) {
       console.error("Помилка завантаження професій", error);
     }
@@ -47,18 +53,18 @@ function CreateReader() {
   const [showAddProfession, setShowAddProfession] = useState(false);
 
   const handleAddProfession = async () => {
-  if (!newProfession.trim()) return;
+    if (!newProfession.trim()) return;
 
-  try {
-    const response = await axiosInstance.post("/professions/", { name: newProfession });
-    setProfessions([...professions, response.data]); // додаємо нову професію до списку
-    setNewProfession(""); // чистимо інпут
-    setShowAddProfession(false); // закриваємо модалку
-  } catch (error) {
-    console.error("Помилка додавання професії", error);
-    alert("Не вдалося додати професію");
-  }
-};
+    try {
+      const response = await axiosInstance.post("/professions/", { name: newProfession });
+      setProfessions([...professions, response.data]); // додаємо нову професію до списку
+      setNewProfession(""); // чистимо інпут
+      setShowAddProfession(false); // закриваємо модалку
+    } catch (error) {
+      console.error("Помилка додавання професії", error);
+      alert("Не вдалося додати професію");
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -66,6 +72,20 @@ function CreateReader() {
       [e.target.name]: e.target.value
     });
   };
+
+  useEffect(() => {
+    axiosInstance.get(`/users/profile/`)
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+    if (!user) {
+      return <div>Завантаження...</div>;
+    }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -173,39 +193,41 @@ function CreateReader() {
                 </option>
                 ))}
             </select>
-            <button
-                type="button"
-                onClick={() => setShowAddProfession(true)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition"
-                >
-                Додати нову професію
-            </button>
-
-            {showAddProfession && (
-            <div className="mt-2 flex gap-2">
-                <input
-                type="text"
-                placeholder="Нова професія"
-                value={newProfession}
-                onChange={(e) => setNewProfession(e.target.value)}
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                type="button"
-                onClick={handleAddProfession}
-                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition"
-                >
-                Зберегти
-                </button>
-                <button
-                type="button"
-                onClick={() => setShowAddProfession(false)}
-                className="bg-gray-300 hover:bg-gray-400 px-3 py-2 rounded-lg transition"
-                >
-                Відмінити
-                </button>
-            </div>
+            {user.role === "librarian" && (
+              <button
+                  type="button"
+                  onClick={() => setShowAddProfession(true)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition"
+                  >
+                  Додати нову професію
+              </button>
             )}
+
+              {showAddProfession && (
+              <div className="mt-2 flex gap-2">
+                  <input
+                  type="text"
+                  placeholder="Нова професія"
+                  value={newProfession}
+                  onChange={(e) => setNewProfession(e.target.value)}
+                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                  type="button"
+                  onClick={handleAddProfession}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition"
+                  >
+                  Зберегти
+                  </button>
+                  <button
+                  type="button"
+                  onClick={() => setShowAddProfession(false)}
+                  className="bg-gray-300 hover:bg-gray-400 px-3 py-2 rounded-lg transition"
+                  >
+                  Відмінити
+                  </button>
+              </div>
+              )}
 
           <div className="space-y-1">
             <label className="text-sm font-medium text-gray-700">

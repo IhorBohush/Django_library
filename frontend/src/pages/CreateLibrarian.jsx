@@ -1,7 +1,9 @@
 import { useState } from "react";
 import axiosInstance from "../api/axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function CreateLibrarian() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -33,6 +35,7 @@ function CreateLibrarian() {
         middle_name: "",
         phone_number: ""
       });
+      navigate("/librarians")
 
     } catch (error) {
       console.error(error);

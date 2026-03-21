@@ -6,11 +6,8 @@ import { AcademicCapIcon, CalendarIcon, CheckIcon } from "@heroicons/react/24/so
 function ReaderDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [reader, setReader] = useState(null);
+  const [librarian, setLibrarian] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const [isActive, setIsActive] = useState();
-  const [endDate, setEndDate] = useState();
 
   const [eMail, setEmail] = useState();
   const [passWord, setPassWord] = useState();
@@ -19,14 +16,14 @@ function ReaderDetail() {
 
 
   useEffect(() => {
-    fetchReader();
+    fetchLibrarian();
   }, [id]);
 
-  const fetchReader = async () => {
+  const fetchLibrarian = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get(`/users/readers/${id}/`);
-      setReader(res.data);
+      const res = await axiosInstance.get(`/users/librarians/${id}/`);
+      setLibrarian(res.data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -36,45 +33,11 @@ function ReaderDetail() {
 
 
   useEffect(() => {
-    if (reader) {
-      setIsActive(reader.is_active);
-      setEndDate(reader.end_date)
-    }
-  }, [reader]);
-
-  const handleBlock = async () => {
-    try {
-      await axiosInstance.patch(`/users/update-reader-active-status/${reader.id}/`, {
-        is_active: false,
-        end_date: endDate
-      });
-
-      setIsActive(false);
-      setModalType(null);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleUnblock = async () => {
-    try {
-      await axiosInstance.patch(`/users/update-reader-active-status/${reader.id}/`, {
-        is_active: true,
-        end_date: null
-      });
-
-      setIsActive(true);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    if (reader) {
-      setEmail(reader.email);
+    if (librarian) {
+      setEmail(librarian.email);
       setPassWord("");
     }
-  }, [reader]);
+  }, [librarian]);
 
   const handleCredent = async () => {
     try {
@@ -84,7 +47,7 @@ function ReaderDetail() {
       }
 
       const res = await axiosInstance.patch(
-        `/users/update-reader-credentials/${reader.id}/`,
+        `/users/update-librarian-credentials/${librarian.id}/`,
         payload
       );
 

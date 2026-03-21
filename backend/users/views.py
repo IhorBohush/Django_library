@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .filters import ReaderFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView, DestroyAPIView
-from .permissions import IsSuperUser, IsLibrarianOrSuperUser
+from .permissions import IsLibrarian, IsSuperUser, IsLibrarianOrSuperUser
 from .serializers import (CreateLibrarianSerializer, CreateReaderSerializer, SetupPasswordSerializer, SuperUserDetailSerializer, UpdateReaderSerializer, UpdateLibrarianSerializer, 
                           UpdateLibrarianCredentialsSerializer, UpdateReaderCredentialsSerializer, UpdateReaderActiveStatusSerializer,
                           ReaderDetailSerializer, LibrarianDetailSerializer, ReadersListSerializer, LibrariansListSerializer)
@@ -66,7 +66,7 @@ class UpdateReaderView(APIView):
     
 
 class UpdateLibrarianView(APIView):
-    permission_classes = [IsLibrarianOrSuperUser]
+    permission_classes = [IsLibrarian]
     serializer_class = UpdateLibrarianSerializer
 
     def patch(self, request, id):
@@ -79,7 +79,7 @@ class UpdateLibrarianView(APIView):
     
 
 class UpdateLibrarianCredentialsView(APIView):
-    permission_classes = [IsLibrarianOrSuperUser]
+    permission_classes = [IsLibrarian]
     serializer_class = UpdateLibrarianCredentialsSerializer
 
     def patch(self, request, id):
@@ -190,6 +190,8 @@ class ReaderDeleteView(APIView):
 class LibrarianDeleteView(DestroyAPIView):
     queryset = User.objects.filter(role=RoleChoices.LIBRARIAN)
     permission_classes = [IsSuperUser]
+    lookup_field = "id"
+    lookup_url_kwarg = "id"
 
 
 class LogoutView(APIView):
