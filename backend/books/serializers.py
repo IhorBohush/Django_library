@@ -15,18 +15,22 @@ class AttachmentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
-class BookDetailSerializer(serializers.ModelSerializer):
+# class BookListSerializer(serializers.ModelSerializer):
+#     category_name = serializers.CharField(source="category.name", read_only=True)
+#     attachments = AttachmentSerializer(many=True, read_only=True)
+
+#     class Meta:
+#         model = Book
+#         fields = ['id', 'title', 'author', 'published_date', 'isbn', 'category', 'category_name', 'attachments']
+#         read_only_fields = ['id']
+
+
+class BookSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source="category.name", read_only=True)
     copies = BookCopySerializer(many=True, read_only=True)
     attachments = AttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'published_date', 'description', 'isbn', 'category', 'copies', 'attachments']
-        read_only_fields = ['id']
-
-
-class BookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = ['id', 'title', 'author', 'published_date', 'description', 'isbn', 'category']
+        fields = ['id', 'title', 'author', 'published_date', 'description', 'isbn', 'category', 'category_name', 'copies', 'attachments']
         read_only_fields = ['id']

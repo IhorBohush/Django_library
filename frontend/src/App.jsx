@@ -20,7 +20,14 @@ import SetupPassword from "./pages/SetupPassword";
 import LibrarianUpdate from "./pages/LibrarianUpdate";
 import CreateProfession from "./pages/CreateProfession";
 import ProfessionsList from "./pages/ProfessionsList";
-import ProfessionUpdate from "./pages/ProfessionUpdate";
+import EditProfession from "./pages/ProfessionUpdate";
+import CreateCategory from "./pages/CreateCategory";
+import CategoriesList from "./pages/CategoriesList";
+import EditCategory from "./pages/CategoryUpdate";
+import CreateBook from "./pages/CreateBook";
+import BookDetail from "./pages/BookDetail";
+import BooksList from "./pages/BooksList";
+import EditBook from "./pages/BookUpdate";
 
 function App() {
   return (
@@ -91,9 +98,28 @@ function App() {
         } />
         <Route path="/professions/:id/update" element={
           <ProtectedRoute allowedRoles="librarian">
-            <ProfessionUpdate />
+            <EditProfession />
           </ProtectedRoute>
         } />
+        <Route path="/categories" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <CategoriesList />
+          </ProtectedRoute>
+          } />
+        <Route path="/create-category" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <CreateCategory />
+          </ProtectedRoute>
+        } />
+        <Route path="/categories/:id/update" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <EditCategory />
+          </ProtectedRoute>
+        } />
+        <Route path="/books" element={<BooksList />} />
+        <Route path="/create-book" element={<CreateBook />} />
+        <Route path="/books/:id" element={<BookDetail />} />
+        <Route path="/books/:id/update" element={<EditBook />} />
       </Routes>
       </main>
       <Footer />

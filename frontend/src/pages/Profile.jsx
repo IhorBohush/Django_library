@@ -80,39 +80,98 @@ function Profile() {
   }
 
   return (
-  <div className="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+    <div className="max-w-3xl mx-auto mt-10">
 
-    <h2 className="text-2xl font-bold mb-6 text-gray-800">
-      Мій профіль
-    </h2>
+    {/* 🔹 Header */}
+    <div className="bg-white shadow-lg rounded-2xl p-6 flex items-center justify-between">
 
-    <div className="space-y-2 text-gray-700">
-      <p><span className="font-semibold">Email:</span> {user.email}</p>
-      <p><span className="font-semibold">Прізвище:</span> {user.last_name}</p>
-      <p><span className="font-semibold">Ім'я:</span> {user.first_name}</p>
-      <p><span className="font-semibold">По батькові:</span> {user.middle_name}</p>
-      <p><span className="font-semibold">Телефон:</span> {user.phone_number}</p>
-      <p><span className="font-semibold">Створено:</span> {new Date(user.created_at).toLocaleDateString()}</p>
-      <p><span className="font-semibold">Оновлено:</span> {new Date(user.updated_at).toLocaleDateString()}</p>
-      {user.role === "librarian" && (
-        <div className="grid grid-cols-2 gap-6">
-          <button
-            onClick={() => navigate(`/librarians/${user.id}/update`)} 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition cursor-pointer">
-              Редагувати
-          </button>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800">
+          {user.last_name} {user.first_name}
+        </h2>
+        <p className="text-gray-500 text-sm">{user.email}</p>
+      </div>
 
-          <button 
-            onClick={() => setModalWindow(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg cursor-pointer">
-              Email / Пароль
-          </button>
-        </div>
-      )}
+      <div className="text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
+        {user.role}
+      </div>
+
     </div>
 
+    {/* 🔹 Info */}
+    <div className="bg-white shadow-lg rounded-2xl p-6 mt-6 space-y-4">
 
-    <hr className="my-6" />
+      <h3 className="text-lg font-semibold text-gray-700">
+        Особиста інформація
+      </h3>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+
+        <div>
+          <span className="text-gray-500 text-sm">Прізвище</span>
+          <p className="font-medium">{user.last_name || "-"}</p>
+        </div>
+
+        <div>
+          <span className="text-gray-500 text-sm">Ім'я</span>
+          <p className="font-medium">{user.first_name || "-"}</p>
+        </div>
+
+        <div>
+          <span className="text-gray-500 text-sm">По батькові</span>
+          <p className="font-medium">{user.middle_name || "-"}</p>
+        </div>
+
+        <div>
+          <span className="text-gray-500 text-sm">Телефон</span>
+          <p className="font-medium">{user.phone_number || "-"}</p>
+        </div>
+
+      </div>
+    </div>
+
+    {/* 🔹 System Info */}
+    <div className="bg-white shadow-lg rounded-2xl p-6 mt-6 space-y-3">
+
+      <h3 className="text-lg font-semibold text-gray-700">
+        Системна інформація
+      </h3>
+
+      <div className="text-gray-600 text-sm space-y-1">
+        <p>Створено: {new Date(user.created_at).toLocaleDateString()}</p>
+        <p>Оновлено: {new Date(user.updated_at).toLocaleDateString()}</p>
+      </div>
+
+    </div>
+
+    {/* 🔹 Actions */}
+    {user.role === "librarian" && (
+      <div className="bg-white shadow-lg rounded-2xl p-6 mt-6">
+
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          Дії
+        </h3>
+
+        <div className="flex flex-wrap gap-3">
+
+          <button
+            onClick={() => navigate(`/librarians/${user.id}/update`)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
+          >
+            ✏️ Редагувати профіль
+          </button>
+
+          <button
+            onClick={() => setModalWindow(true)}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg transition"
+          >
+            🔐 Змінити email / пароль
+          </button>
+
+        </div>
+
+      </div>
+    )}
 
     {/* тільки суперюзер */}
     {user.role === "superuser" && (
@@ -152,36 +211,98 @@ function Profile() {
 
     {/* бібліотекар */}
     {user.role === "librarian" && (
-      <div className="space-y-2 text-gray-700">
-        <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2 text-green-700">
-            Меню бібліотекаря
-          </h3>
-          <div className="grid grid-cols-2 gap-6">
-            <Link to="/create-reader">
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg cursor-pointer">
-                Створити читача
-              </button>
-            </Link>
+      <div className="space-y-6">
 
-            <Link to="/readers">
-              <button className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg cursor-pointer">
-                Список читачів
-              </button>
-            </Link>
+        <h2 className="text-2xl font-bold text-gray-800">
+          Панель бібліотекаря
+        </h2>
 
-            <Link to="/create-profession">
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg cursor-pointer">
-                Створити професію
-              </button>
-            </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <Link to="/professions">
-              <button className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg cursor-pointer">
-                Список професій
-              </button>
-            </Link>
+          {/* 📚 Читачі */}
+          <div className="bg-white shadow-md rounded-2xl p-5 hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold mb-3 text-green-700">
+              Читачі
+            </h3>
+
+            <div className="space-y-2">
+              <Link to="/create-reader">
+                <div className="p-3 bg-green-50 hover:bg-green-100 rounded-lg cursor-pointer transition">
+                  ➕ Створити читача
+                </div>
+              </Link>
+
+              <Link to="/readers">
+                <div className="p-3 bg-green-50 hover:bg-green-100 rounded-lg cursor-pointer transition">
+                  📋 Список читачів
+                </div>
+              </Link>
+            </div>
           </div>
+
+          {/* 🧑‍💼 Професії */}
+          <div className="bg-white shadow-md rounded-2xl p-5 hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold mb-3 text-gray-700">
+              Професії
+            </h3>
+
+            <div className="space-y-2">
+              <Link to="/create-profession">
+                <div className="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition">
+                  ➕ Створити професію
+                </div>
+              </Link>
+
+              <Link to="/professions">
+                <div className="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition">
+                  📋 Список професій
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          {/* 🗂 Категорії */}
+          <div className="bg-white shadow-md rounded-2xl p-5 hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold mb-3 text-pink-700">
+              Категорії
+            </h3>
+
+            <div className="space-y-2">
+              <Link to="/create-category">
+                <div className="p-3 bg-pink-50 hover:bg-pink-100 rounded-lg cursor-pointer transition">
+                  ➕ Створити категорію
+                </div>
+              </Link>
+
+              <Link to="/categories">
+                <div className="p-3 bg-pink-50 hover:bg-pink-100 rounded-lg cursor-pointer transition">
+                  📋 Список категорій
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          {/* 📚 Книги */}
+          <div className="bg-white shadow-md rounded-2xl p-5 hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold mb-3 text-orange-700">
+              Книги
+            </h3>
+
+            <div className="space-y-2">
+              <Link to="/create-book">
+                <div className="p-3 bg-orange-50 hover:bg-orange-100 rounded-lg cursor-pointer transition">
+                  ➕ Створити книгу
+                </div>
+              </Link>
+
+              <Link to="/books">
+                <div className="p-3 bg-orange-50 hover:bg-orange-100 rounded-lg cursor-pointer transition">
+                  📋 Список книг
+                </div>
+              </Link>
+            </div>
+          </div>
+
         </div>
       </div>
     )}
