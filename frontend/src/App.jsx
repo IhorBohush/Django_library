@@ -18,6 +18,9 @@ import ReaderDetail from "./pages/ReaderDetail";
 import ReaderUpdate from "./pages/ReaderUpdate";
 import SetupPassword from "./pages/SetupPassword";
 import LibrarianUpdate from "./pages/LibrarianUpdate";
+import CreateProfession from "./pages/CreateProfession";
+import ProfessionsList from "./pages/ProfessionsList";
+import ProfessionUpdate from "./pages/ProfessionUpdate";
 
 function App() {
   return (
@@ -74,6 +77,21 @@ function App() {
         <Route path="/librarians/:id/update" element={
           <ProtectedRoute allowedRoles="librarian">
             <LibrarianUpdate />
+          </ProtectedRoute>
+        } />
+        <Route path="/professions" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <ProfessionsList />
+          </ProtectedRoute>
+        } />
+        <Route path="/create-profession" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <CreateProfession />
+          </ProtectedRoute>
+        } />
+        <Route path="/professions/:id/update" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <ProfessionUpdate />
           </ProtectedRoute>
         } />
       </Routes>

@@ -22,12 +22,8 @@ function CreateReader() {
   useEffect(() => {
   const fetchProfessions = async () => {
     try {
-      const response = await axiosInstance.get("/professions/");
-      setProfessions(
-        Array.isArray(response.data.professions)
-        ? response.data.professions
-        : []
-    );
+      const res = await axiosInstance.get("/professions/");
+      setProfessions(Array.isArray(res.data) ? res.data : res.data.results || []);
     } catch (error) {
       console.error("Помилка завантаження професій", error);
     }
@@ -83,9 +79,9 @@ function CreateReader() {
       });
   }, []);
 
-    if (!user) {
-      return <div>Завантаження...</div>;
-    }
+  if (!user) {
+    return <div>Завантаження...</div>;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,10 +104,21 @@ function CreateReader() {
       });
 
     } catch (error) {
-      console.error(error);
-      alert("Помилка створення читача");
-    }
-  };
+        console.log("ERROR:", error.response?.data);
+
+        const data = error.response?.data;
+
+        if (data?.email) {
+          alert("Email вже існує");
+        } else if (data?.password) {
+          alert("Некоректний пароль");
+        } else if (data?.actor_type) {
+          alert("Оберіть тип читача");
+        } else {
+          alert("Помилка створення");
+        }
+      }
+    };
 
   return (
     <div className="flex justify-center items-start pt-12 px-4">
@@ -188,9 +195,9 @@ function CreateReader() {
                 <option value="">Оберіть професію</option>
 
                 {professions.map((profession) => (
-                <option key={profession.id} value={profession.id}>
+                  <option key={profession.id} value={profession.id}>
                     {profession.name}
-                </option>
+                  </option>
                 ))}
             </select>
             {user.role === "librarian" && (

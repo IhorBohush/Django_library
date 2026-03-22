@@ -36,7 +36,7 @@ class CreateLibrarianSerializer(serializers.ModelSerializer):
 
 
 class CreateReaderSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
         model = User
@@ -202,6 +202,7 @@ class UpdateReaderActiveStatusSerializer(serializers.Serializer):
     
 
 class ReaderDetailSerializer(serializers.ModelSerializer):
+    profession_name = serializers.CharField(source="profession.name", read_only=True)
     actor_type_display = serializers.CharField(
         source="get_actor_type_display",
         read_only=True
@@ -218,6 +219,7 @@ class ReaderDetailSerializer(serializers.ModelSerializer):
             'actor_type',
             'actor_type_display',
             'profession',
+            'profession_name',
             'graduation_date',
             'is_active',
             'created_at',
@@ -260,6 +262,7 @@ class SuperUserDetailSerializer(serializers.ModelSerializer):
 
 
 class ReadersListSerializer(serializers.ModelSerializer):
+    profession_name = serializers.CharField(source="profession.name", read_only=True)
     actor_type_display = serializers.CharField(
         source="get_actor_type_display",
         read_only=True
@@ -275,6 +278,7 @@ class ReadersListSerializer(serializers.ModelSerializer):
             'actor_type',
             'actor_type_display',
             'profession',
+            'profession_name',
             'graduation_date',
             'is_active',
             'created_at'

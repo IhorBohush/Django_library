@@ -169,6 +169,18 @@ function Profile() {
                 Список читачів
               </button>
             </Link>
+
+            <Link to="/create-profession">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg cursor-pointer">
+                Створити професію
+              </button>
+            </Link>
+
+            <Link to="/professions">
+              <button className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg cursor-pointer">
+                Список професій
+              </button>
+            </Link>
           </div>
         </div>
       </div>

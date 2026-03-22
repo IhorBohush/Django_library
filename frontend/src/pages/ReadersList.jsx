@@ -47,11 +47,7 @@ function ReadersList() {
   const fetchProfessions = async () => {
     try {
       const res = await axiosInstance.get("/professions/");
-      setProfessions(
-        Array.isArray(res.data.professions)
-        ? res.data.professions
-        : []
-    );
+      setProfessions(Array.isArray(res.data) ? res.data : res.data.results || []);
     } catch (error) {
       console.error(error);
     }
@@ -279,8 +275,8 @@ function ReadersList() {
                   {reader.first_name}
                 </td>
 
-                <td className="p-3">
-                  {reader.profession}
+                <td className="p-3 wrap-break-word max-w-50">
+                  {reader.profession_name}
                 </td>
 
                 <td className="p-3">
