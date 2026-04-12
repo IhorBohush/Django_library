@@ -3,10 +3,12 @@ from django.db import models
 class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=100)
-    published_date = models.DateField()
+    published_year = models.IntegerField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    isbn = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    isbn = models.CharField(max_length=20, blank=True, null=True)
     category = models.ForeignKey('categories.Category', on_delete=models.SET_NULL, null=True, related_name='books')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Книга'

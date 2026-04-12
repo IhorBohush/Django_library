@@ -28,7 +28,7 @@ function ReadersList() {
 
   const navigate = useNavigate();
 
-  const pageSize = 10;
+  const pageSize = 12;
 
   // debounce search
   useEffect(() => {

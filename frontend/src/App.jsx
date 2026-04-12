@@ -117,9 +117,17 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/books" element={<BooksList />} />
-        <Route path="/create-book" element={<CreateBook />} />
+        <Route path="/create-book" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <CreateBook />
+          </ProtectedRoute>
+        } />
         <Route path="/books/:id" element={<BookDetail />} />
-        <Route path="/books/:id/update" element={<EditBook />} />
+        <Route path="/books/:id/update" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <EditBook />
+          </ProtectedRoute>
+        } />
       </Routes>
       </main>
       <Footer />

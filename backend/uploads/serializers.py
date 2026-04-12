@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+# from books.serializers import AttachmentSerializer
 from .models import Upload
 
 class UploadSerializer(serializers.ModelSerializer):
@@ -14,7 +16,7 @@ class UploadSerializer(serializers.ModelSerializer):
             "type",
             "size",
             "content_type",
-            "created_at",
+            "created_at"
         ]
 
     def get_file_url(self, obj):
