@@ -242,6 +242,18 @@ function BookDetail() {
                         {isLibrarian && activeCopyId === copy.id && (
                           <div className="flex gap-2 mt-3">
 
+                            {/* 🔹 Видати книгу */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/orders/create?copy=${copy.id}`);
+                              }}
+                              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                            >
+                              📖 Видати
+                            </button>
+
+                            {/* 🔹 Видалити */}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -269,7 +281,10 @@ function BookDetail() {
                   <div className="space-y-2">
                     {unavailableCopies.map(copy => (
 
-                      <div className="flex justify-between items-center">
+                      <div
+                        key={copy.id}
+                        className="flex justify-between items-center"
+                      >
                         <span>№ {copy.number}</span>
                         <span className="text-sm text-red-600">✖ Видано</span>
                       </div>

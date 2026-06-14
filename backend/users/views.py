@@ -165,7 +165,7 @@ class ReadersListView(ListAPIView):
 
     filterset_class = ReaderFilter
     
-    search_fields = ["last_name", "first_name", "email"]
+    search_fields = ["last_name", "first_name", "email", "phone_number"]
     ordering_fields = ["last_name", "first_name"]
     ordering = ["-created_at"]
     

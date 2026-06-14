@@ -10,6 +10,29 @@ class BookCopySerializer(serializers.ModelSerializer):
         fields = ['id', 'number', 'book', 'is_available']
         read_only_fields = ['id']
 
+    def validate_number(self, value):
+        value = value.strip()
+        if not value:
+            raise serializers.ValidationError("Copy number cannot be empty.")
+        return value
+
+    def validate(self, attrs):
+        book = attrs.get('book', getattr(self.instance, 'book', None))
+        number = attrs.get('number', getattr(self.instance, 'number', None))
+
+        if book and number:
+            queryset = BookCopy.objects.filter(book=book, number=number)
+
+            if self.instance:
+                queryset = queryset.exclude(pk=self.instance.pk)
+
+            if queryset.exists():
+                raise serializers.ValidationError({
+                    'number': 'This book already has a copy with this number.'
+                })
+
+        return attrs
+
 
 class AttachmentSerializer(serializers.ModelSerializer):
     upload = UploadSerializer(read_only=True)

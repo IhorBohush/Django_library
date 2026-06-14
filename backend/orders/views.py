@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.shortcuts import render
 from rest_framework.views import APIView, Response
 from rest_framework import status
@@ -32,7 +33,7 @@ class OrderListView(ListAPIView):
 
     filterset_fields = ["is_active"]
     search_fields = ["book__book__title", "user__first_name", "user__last_name"]
-    ordering_fields = ["order_date", "return_date"]
+    ordering_fields = ["order_date", "return_date", "due_date"]
     ordering = ["-order_date"]
 
 
@@ -54,3 +55,20 @@ class OrderDeleteView(APIView):
             return Response('Cannot delete an active order.', status=status.HTTP_400_BAD_REQUEST)
         except Order.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+
+class OrdersStatsView(APIView):
+    def get(self, request):
+        total_orders = Order.objects.count()
+        active = Order.objects.filter(is_active=True).count()
+
+        overdue = Order.objects.filter(
+            is_active=True,
+            due_date__lt=timezone.now().date()
+        ).count()
+
+        return Response({
+            "active_orders": active,
+            "overdue_orders": overdue,
+            "total_orders": total_orders,
+        })

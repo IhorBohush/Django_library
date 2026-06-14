@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -37,9 +38,10 @@ class BookViewSet(viewsets.ModelViewSet):
 class BookCopyViewSet(viewsets.ModelViewSet):
     serializer_class = BookCopySerializer
     permission_classes = [IsLibrarian]
+    pagination_class = None
 
     def get_queryset(self):
-        queryset = BookCopy.objects.all()
+        queryset = BookCopy.objects.all().order_by('number', 'id')
         book_id = self.request.query_params.get('book')
 
         if book_id:
@@ -47,11 +49,11 @@ class BookCopyViewSet(viewsets.ModelViewSet):
 
         return queryset
     
-    def delete(self, request, *args, **kwargs):
+    def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         if not instance.is_available:
             return Response({"detail": "Неможливо видалити недоступний екземпляр книги."}, status=status.HTTP_400_BAD_REQUEST)
-        return super().delete(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
 
 
 class AttachmentViewSet(viewsets.ModelViewSet):

@@ -28,6 +28,9 @@ import CreateBook from "./pages/CreateBook";
 import BookDetail from "./pages/BookDetail";
 import BooksList from "./pages/BooksList";
 import EditBook from "./pages/BookUpdate";
+import CreateOrder from "./pages/CreateOrder";
+import ListOrders from "./pages/OrderList";
+import DetailOrder from "./pages/OrderDetail";
 
 function App() {
   return (
@@ -127,6 +130,21 @@ function App() {
           <ProtectedRoute allowedRoles="librarian">
             <EditBook />
           </ProtectedRoute>
+        } />
+        <Route path="/orders/create" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <CreateOrder />
+          </ProtectedRoute>
+        } />
+        <Route path="/orders" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <ListOrders />
+          </ProtectedRoute>
+        } />
+        <Route path="/orders/:id" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <DetailOrder />
+          </ProtectedRoute>    
         } />
       </Routes>
       </main>

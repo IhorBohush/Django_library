@@ -8,6 +8,7 @@ class Order(models.Model):
     is_active = models.BooleanField(default=True)
     order_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'Замовлення'

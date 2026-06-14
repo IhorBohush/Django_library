@@ -275,6 +275,7 @@ class ReadersListSerializer(serializers.ModelSerializer):
             'first_name', 
             'last_name', 
             'email',
+            'phone_number',
             'actor_type',
             'actor_type_display',
             'profession',

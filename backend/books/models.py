@@ -30,6 +30,17 @@ class BookCopy(models.Model):
     class Meta:
         verbose_name = 'Екземпляр книги'
         verbose_name_plural = 'Екземпляри книг'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['book', 'number'],
+                name='unique_book_copy_number_per_book',
+            ),
+        ]
+     
+    def save(self, *args, **kwargs):
+        if self.number:
+            self.number = self.number.strip()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.book.title} - {'Доступна' if self.is_available else 'Недоступна'}"

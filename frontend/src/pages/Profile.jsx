@@ -228,7 +228,7 @@ function Profile() {
             <div className="space-y-2">
               <Link to="/create-reader">
                 <div className="p-3 bg-green-50 hover:bg-green-100 rounded-lg cursor-pointer transition">
-                  ➕ Створити читача
+                  ⭕ Створити читача
                 </div>
               </Link>
 
@@ -249,7 +249,7 @@ function Profile() {
             <div className="space-y-2">
               <Link to="/create-profession">
                 <div className="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition">
-                  ➕ Створити професію
+                  ⭕ Створити професію
                 </div>
               </Link>
 
@@ -270,7 +270,7 @@ function Profile() {
             <div className="space-y-2">
               <Link to="/create-category">
                 <div className="p-3 bg-pink-50 hover:bg-pink-100 rounded-lg cursor-pointer transition">
-                  ➕ Створити категорію
+                  ⭕ Створити категорію
                 </div>
               </Link>
 
@@ -291,13 +291,28 @@ function Profile() {
             <div className="space-y-2">
               <Link to="/create-book">
                 <div className="p-3 bg-orange-50 hover:bg-orange-100 rounded-lg cursor-pointer transition">
-                  ➕ Створити книгу
+                  ⭕ Створити книгу
                 </div>
               </Link>
 
               <Link to="/books">
                 <div className="p-3 bg-orange-50 hover:bg-orange-100 rounded-lg cursor-pointer transition">
                   📋 Список книг
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          {/* 📑 Ордери */}
+          <div className="bg-white shadow-md rounded-2xl p-5 hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold mb-3 text-blue-700">
+              Ордери
+            </h3>
+
+            <div className="space-y-2">
+              <Link to="/orders">
+                <div className="p-3 bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer transition">
+                  📋 Список ордерів
                 </div>
               </Link>
             </div>

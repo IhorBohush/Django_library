@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import OrderCreateView, OrderUpdateView, OrderListView, OrderDetailView, OrderDeleteView
+from .views import OrderCreateView, OrderUpdateView, OrderListView, OrderDetailView, OrderDeleteView, OrdersStatsView
 
 urlpatterns = [
     path('orders/', OrderListView.as_view(), name='order-list'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('orders/<int:pk>/update/', OrderUpdateView.as_view(), name='order-update'),
     path('orders/<int:pk>/detail/', OrderDetailView.as_view(), name='order-detail'),
     path('orders/<int:pk>/delete/', OrderDeleteView.as_view(), name='order-delete'),
+    path('orders/stats/', OrdersStatsView.as_view(), name='order-stats'),
 ]
