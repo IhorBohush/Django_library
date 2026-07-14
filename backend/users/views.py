@@ -207,7 +207,8 @@ class CurrentUserView(APIView):
 
     def get(self, request):
         return Response({
-            "first_name": request.user.first_name
+            "first_name": request.user.first_name,
+            "role": request.user.role,
         })
     
 

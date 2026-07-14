@@ -3,7 +3,7 @@ from django.utils.crypto import get_random_string
 from django.contrib.auth import get_user_model
 from .validators import validate_user_password
 from .services import send_account_setup_email
-from .models import User, RoleChoices
+from .models import ActorChoices, User, RoleChoices
 
 User = get_user_model()
 
@@ -61,10 +61,18 @@ class CreateReaderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['role'] = RoleChoices.READER
+
+        actor_type = validated_data.get('actor_type')
+        if actor_type != ActorChoices.STUDENT:
+            validated_data['profession'] = None
+
         password = validated_data.pop('password', None)
         if password:
             # Бібліотекар задав пароль сам
-            validate_user_password(password)
+            try:
+                validate_user_password(password)
+            except serializers.ValidationError as e:
+                raise serializers.ValidationError({"password": e.detail})
             user = User.objects.create_user(
                 **validated_data,
                 password=password,
@@ -195,8 +203,9 @@ class UpdateReaderActiveStatusSerializer(serializers.Serializer):
 
 
     def update(self, instance, validated_data):
-        instance.is_active = validated_data['is_active']
-        instance.end_date = validated_data['end_date']
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.end_date = validated_data.get('end_date', instance.end_date)
+
         instance.save()
         return instance
     

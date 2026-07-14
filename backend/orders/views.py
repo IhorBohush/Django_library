@@ -5,9 +5,12 @@ from rest_framework import status
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+
+from users.models import RoleChoices
 from .models import Order
 from .serializers import OrderCreateSerializer, OrderUpdateSerializer, OrderListSerializer, OrderDetailSerializer
 from users.permissions import IsLibrarian
+from rest_framework.permissions import IsAuthenticated
 
 class OrderCreateView(CreateAPIView):
     queryset = Order.objects.all()
@@ -22,19 +25,26 @@ class OrderUpdateView(UpdateAPIView):
 
 
 class OrderListView(ListAPIView):
-    queryset = Order.objects.all()
     serializer_class = OrderListSerializer
-    permission_classes = [IsLibrarian]
+    permission_classes = [IsAuthenticated]
     filter_backends = [
         DjangoFilterBackend,
         SearchFilter,
         OrderingFilter,
     ]
 
-    filterset_fields = ["is_active"]
+    filterset_fields = ["is_active", "user__id"]
     search_fields = ["book__book__title", "user__first_name", "user__last_name"]
     ordering_fields = ["order_date", "return_date", "due_date"]
     ordering = ["-order_date"]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.role == RoleChoices.LIBRARIAN:
+            return Order.objects.all().order_by("-order_date")
+
+        return Order.objects.filter(user=user).order_by("-order_date")
 
 
 class OrderDetailView(RetrieveAPIView):
@@ -58,6 +68,7 @@ class OrderDeleteView(APIView):
         
 
 class OrdersStatsView(APIView):
+    
     def get(self, request):
         total_orders = Order.objects.count()
         active = Order.objects.filter(is_active=True).count()
@@ -72,3 +83,14 @@ class OrdersStatsView(APIView):
             "overdue_orders": overdue,
             "total_orders": total_orders,
         })
+    
+
+# class ReaderOrdersListView(ListAPIView):
+#     serializer_class = OrderListSerializer
+#     permission_classes = [IsLibrarianOrReaderOrderOwner]
+
+#     def get_queryset(self):
+#         orders = Order.objects.filter(user__id=self.request.user.id)
+#         if not orders.exists():
+#             return Order.objects.none()
+#         return orders.order_by("-order_date")

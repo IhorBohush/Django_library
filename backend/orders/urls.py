@@ -8,4 +8,5 @@ urlpatterns = [
     path('orders/<int:pk>/detail/', OrderDetailView.as_view(), name='order-detail'),
     path('orders/<int:pk>/delete/', OrderDeleteView.as_view(), name='order-delete'),
     path('orders/stats/', OrdersStatsView.as_view(), name='order-stats'),
+    # path('orders/user/<uuid:user_id>/', ReaderOrdersListView.as_view(), name='reader-orders-list'),
 ]

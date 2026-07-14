@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.db import transaction
 from django.utils import timezone
+from users.models import User
 from books.models import BookCopy
 from .models import Order
 
@@ -17,12 +18,17 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         book = BookCopy.objects.select_for_update().get(pk=validated_data['book'].pk)
+        user = User.objects.get(pk=validated_data['user'].pk)
+
+        if not user.is_active:
+            raise serializers.ValidationError({"user": "This user is not active."})
 
         if not book.is_available:
             raise serializers.ValidationError({"book": "This book copy is already issued."})
 
         validated_data['book'] = book
         validated_data['librarian'] = self.context['request'].user
+        validated_data['user'] = user
         order = Order.objects.create(**validated_data)
 
         book.is_available = False
