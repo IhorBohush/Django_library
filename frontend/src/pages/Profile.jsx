@@ -1,15 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axiosInstance from "../api/axios";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+// import { AuthContext } from "../context/AuthContext";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 function Profile() {
 
+  // const { id } = useParams();
   const navigate = useNavigate();
+  // const { user } = useContext(AuthContext);
   const [user, setUser] = useState(null);
   const [modalWindow, setModalWindow] = useState(false);
   const [eMail, setEmail] = useState();
   const [passWord, setPassWord] = useState();
   const [oldPassword, setOldPassword] = useState("");
+  
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const pageSize = 12;
 
   useEffect(() => {
     axiosInstance.get(`/users/profile/`)
@@ -74,6 +84,33 @@ function Profile() {
       }
     }
   };
+
+
+  useEffect(() => {
+    if (!user) return;
+    fetchReaderOrders();
+  }, [user, page]);
+
+  const fetchReaderOrders = async () => {
+    try {
+      setOrdersLoading(true);
+
+      const res = await axiosInstance.get(`/orders/`, {
+        params: {
+          page: page,
+        },
+      });
+
+      setOrders(res.data.results || res.data);
+      setCount(res.data.count || res.data.length);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const totalPages = Math.ceil(count / pageSize);
 
   if (!user) {
     return <div>Завантаження...</div>;
@@ -384,9 +421,129 @@ function Profile() {
           Меню читача
         </h3>
 
-        <p className="text-gray-600">
-          Тут будуть взяті книги
-        </p>
+        {/* Ордери читача */}
+
+        <div className="border-t pt-8">
+          <h2 className="text-2xl font-bold mb-4">
+            Книги
+          </h2>
+
+          {ordersLoading ? (
+            <p>Завантаження...</p>
+          ) : orders.length === 0 ? (
+            <p className="text-gray-500">
+              У читача немає ордерів
+            </p>
+          ) : (
+            <div className="space-y-3">
+
+              {orders.map((order) => {
+
+                const isOverdue =
+                  order.is_active &&
+                  order.due_date &&
+                  new Date(order.due_date) < new Date();
+
+                return (
+                  <div
+                    key={order.id}
+                    className="border rounded-lg p-4 flex justify-between items-center"
+                  >
+
+                    <div>
+
+                      <div className="font-semibold text-lg">
+                        {order.book_title}
+                      </div>
+
+                      <div className="text-sm text-gray-500">
+                        Примірник № {order.book_number}
+                      </div>
+
+                      <div className="text-sm mt-2">
+                        Видано:{" "}
+                        {order.order_date ? (
+                        <>
+                          {new Date(order.order_date).toLocaleDateString("uk-UA")}{" "}
+                          {new Date(order.order_date).toLocaleTimeString("uk-UA", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </>
+                      ) : (
+                        "-"
+                      )}
+                      </div>
+
+                      <div className="text-sm">
+                        Повернути до: {order.due_date || "-"}
+                      </div>
+
+                    </div>
+
+                    <div className="flex flex-col items-end gap-2">
+
+                      {isOverdue ? (
+                        <span className="px-2 py-1 rounded-full bg-red-100 text-red-700 text-sm">
+                          Протерміновано
+                        </span>
+                      ) : order.is_active ? (
+                        <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-sm">
+                          Активний
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 text-sm">
+                          Повернено
+                        </span>
+                      )}
+
+                      <div className="text-sm">
+                        {order.return_date ? (
+                        <>
+                          {new Date(order.return_date).toLocaleDateString("uk-UA")}{" "}
+                          {new Date(order.return_date).toLocaleTimeString("uk-UA", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </>
+                      ) : (
+                        "Книга не повернена"
+                      )}
+                      </div>
+
+                    </div>
+
+                  </div>
+                );
+              })}
+
+            </div>
+          )}
+        </div>
+        {/* Pagination */}
+          <div className="flex items-center gap-3 mt-5">
+
+          <button
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
+            Попередня
+          </button>
+
+          <span>
+            Сторінка {page} з {totalPages || 1}
+          </span>
+
+          <button
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            disabled={page >= totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            Наступна
+          </button>
+
+        </div>
       </div>
     )}
 

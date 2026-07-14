@@ -186,55 +186,57 @@ function CreateReader() {
             ))}
           </select>
 
-            <select
-                name="profession"
-                value={formData.profession}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-                <option value="">Оберіть професію</option>
+          <div>
+            {formData.actor_type === "student" && (
+              <select
+                  name="profession"
+                  value={formData.profession}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                  <option value="">Оберіть професію</option>
 
-                {professions.map((profession) => (
-                  <option key={profession.id} value={profession.id}>
-                    {profession.name}
-                  </option>
-                ))}
-            </select>
-            {user.role === "librarian" && (
-              <button
-                  type="button"
-                  onClick={() => setShowAddProfession(true)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition"
-                  >
-                  Додати нову професію
-              </button>
-            )}
-
-              {showAddProfession && (
-              <div className="mt-2 flex gap-2">
-                  <input
-                  type="text"
-                  placeholder="Нова професія"
-                  value={newProfession}
-                  onChange={(e) => setNewProfession(e.target.value)}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
-                  type="button"
-                  onClick={handleAddProfession}
-                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition"
-                  >
-                  Зберегти
-                  </button>
-                  <button
-                  type="button"
-                  onClick={() => setShowAddProfession(false)}
-                  className="bg-gray-300 hover:bg-gray-400 px-3 py-2 rounded-lg transition"
-                  >
-                  Відмінити
-                  </button>
-              </div>
+                  {professions.map((profession) => (
+                    <option key={profession.id} value={profession.id}>
+                      {profession.name}
+                    </option>
+                  ))}
+              </select>)}
+              {formData.actor_type === "student" && (
+                <button
+                    type="button"
+                    onClick={() => setShowAddProfession(true)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition"
+                    >
+                    Додати нову професію
+                </button>
               )}
+
+                {showAddProfession && (
+                <div className="mt-2 flex gap-2">
+                    <input
+                    type="text"
+                    placeholder="Нова професія"
+                    value={newProfession}
+                    onChange={(e) => setNewProfession(e.target.value)}
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                    type="button"
+                    onClick={handleAddProfession}
+                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition"
+                    >
+                    Зберегти
+                    </button>
+                    <button
+                    type="button"
+                    onClick={() => setShowAddProfession(false)}
+                    className="bg-gray-300 hover:bg-gray-400 px-3 py-2 rounded-lg transition"
+                    >
+                    Відмінити
+                    </button>
+                </div>
+                )}
 
           <div className="space-y-1">
             <label className="text-sm font-medium text-gray-700">
@@ -249,6 +251,7 @@ function CreateReader() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             </div>
+          </div>
 
           <input
             type="password"

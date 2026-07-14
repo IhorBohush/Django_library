@@ -9,11 +9,15 @@ function ReaderDetail() {
   const [reader, setReader] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [isActive, setIsActive] = useState();
-  const [endDate, setEndDate] = useState();
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
 
   const [eMail, setEmail] = useState();
   const [passWord, setPassWord] = useState();
+
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const pageSize = 12;
   
   const [modalType, setModalType] = useState(null);
 
@@ -34,40 +38,68 @@ function ReaderDetail() {
     }
   };
 
-
-  useEffect(() => {
-    if (reader) {
-      setIsActive(reader.is_active);
-      setEndDate(reader.end_date)
-    }
-  }, [reader]);
-
   const handleBlock = async () => {
     try {
-      await axiosInstance.patch(`/users/update-reader-active-status/${reader.id}/`, {
-        is_active: false,
-        end_date: endDate
-      });
+      await axiosInstance.patch(`/users/update-reader-active-status/${reader.id}/`,
+        { is_active: false,
+          end_date: new Date().toISOString().split('T')[0], // відправляємо поточну дату як дату блокування,
+         }
+      );
+        setReader(prev => ({
+          ...prev,
+          is_active: false,
+          end_date: new Date().toISOString().split('T')[0], // встановлюємо поточну дату як дату блокування,
+        }));
 
-      setIsActive(false);
       setModalType(null);
     } catch (error) {
-      console.error(error);
+      console.error(error.response?.data);
     }
   };
 
   const handleUnblock = async () => {
     try {
-      await axiosInstance.patch(`/users/update-reader-active-status/${reader.id}/`, {
-        is_active: true,
-        end_date: null
-      });
+      await axiosInstance.patch(`/users/update-reader-active-status/${reader.id}/`,
+        { is_active: true,
+          end_date: null,
+         }
+      );
+        setReader(prev => ({
+          ...prev,
+          is_active: true,
+          end_date: null,
+        }));
 
-      setIsActive(true);
     } catch (error) {
-      console.error(error);
+      console.error(error.response?.data);
     }
   };
+
+  useEffect(() => {
+    fetchReaderOrders();
+  }, [id, page]);
+
+  const fetchReaderOrders = async () => {
+    try {
+      setOrdersLoading(true);
+
+      const res = await axiosInstance.get("/orders/", {
+        params: {
+          user__id: id,
+          page: page,
+        },
+      });
+
+      setOrders(res.data.results || res.data);
+      setCount(res.data.count || res.data.length);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const totalPages = Math.ceil(count / pageSize);
 
   useEffect(() => {
     if (reader) {
@@ -101,7 +133,11 @@ function ReaderDetail() {
 
     // Оновлюємо статус читача після відповіді бекенду
     if (res.data.is_active !== undefined) {
-      setIsActive(res.data.is_active);
+      setReader(prev => ({
+        ...prev,
+        is_active: res.data.is_active,
+        end_date: res.data.end_date,
+      }));
     }
 
   } catch (error) {
@@ -181,7 +217,7 @@ function ReaderDetail() {
           <AcademicCapIcon className="w-6 h-6 text-gray-400" />
           <div>
             <p className="text-sm text-gray-500">Дата закінчення навчання</p>
-            <p className="font-semibold">{reader.graduation_date || "N/A"}</p>
+            <p className="font-semibold">{new Date(reader.graduation_date).toLocaleDateString("uk-UA") || "N/A"}</p>
           </div>
         </div>
 
@@ -189,23 +225,49 @@ function ReaderDetail() {
           <CheckIcon className="w-6 h-6 text-gray-400" />
           <div>
             <p className="text-sm text-gray-500">Дата створення</p>
-            <p className="font-semibold">{reader.created_at}</p>
+            <p className="font-semibold">{reader.created_at ? (
+                      <>
+                        {new Date(reader.created_at).toLocaleDateString("uk-UA")}{" "}
+                        {new Date(reader.created_at).toLocaleTimeString("uk-UA", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </>
+                    ) : (
+                      "-"
+                    )}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-lg">
           <div>
             <p className="text-sm text-gray-500">Дата оновлення</p>
-            <p className="font-semibold">{reader.updated_at}</p>
+            <p className="font-semibold">{reader.updated_at ? (
+                      <>
+                        {new Date(reader.updated_at).toLocaleDateString("uk-UA")}{" "}
+                        {new Date(reader.updated_at).toLocaleTimeString("uk-UA", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </>
+                    ) : (
+                      "-"
+                    )}</p>
           </div>
         </div>
 
-        {!isActive && endDate && (
+        {!reader.is_active && reader.end_date && (
           <div className="flex items-center gap-3 bg-red-50 p-4 rounded-lg">
             <CalendarIcon className="w-6 h-6 text-red-400" />
             <div>
               <p className="text-sm text-red-500">Дата блокування</p>
-              <p className="font-semibold">{endDate}</p>
+              <p className="font-semibold">{reader.end_date ? (
+                      <>
+                        {new Date(reader.end_date).toLocaleDateString("uk-UA")}{" "}
+                      </>
+                    ) : (
+                      "-"
+                    )}</p>
             </div>
           </div>
         )}
@@ -215,7 +277,7 @@ function ReaderDetail() {
       <div>
         <p className="text-sm text-gray-500 mb-1">Статус</p>
 
-        {isActive ? (
+        {reader.is_active ? (
           <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-medium">
             Активний
           </span>
@@ -226,6 +288,136 @@ function ReaderDetail() {
         )}
       </div>
 
+      {/* Ордери читача */}
+
+      <div className="border-t pt-8">
+        <h2 className="text-2xl font-bold mb-4">
+          Книги
+        </h2>
+
+        {ordersLoading ? (
+          <p>Завантаження...</p>
+        ) : orders.length === 0 ? (
+          <p className="text-gray-500">
+            У читача немає ордерів
+          </p>
+        ) : (
+          <div className="space-y-3">
+
+            {orders.map((order) => {
+
+              const isOverdue =
+                order.is_active &&
+                order.due_date &&
+                new Date(order.due_date) < new Date();
+
+              return (
+                <div
+                  key={order.id}
+                  className="border rounded-lg p-4 flex justify-between items-center"
+                >
+
+                  <div>
+
+                    <div className="font-semibold text-lg">
+                      {order.book_title}
+                    </div>
+
+                    <div className="text-sm text-gray-500">
+                      Примірник № {order.book_number}
+                    </div>
+
+                    <div className="text-sm mt-2">
+                      Видано:{" "}
+                      {order.order_date ? (
+                      <>
+                        {new Date(order.order_date).toLocaleDateString("uk-UA")}{" "}
+                        {new Date(order.order_date).toLocaleTimeString("uk-UA", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </>
+                    ) : (
+                      "-"
+                    )}
+                    </div>
+
+                    <div className="text-sm">
+                      Повернути до: {order.due_date || "-"}
+                    </div>
+
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2">
+
+                    {isOverdue ? (
+                      <span className="px-2 py-1 rounded-full bg-red-100 text-red-700 text-sm">
+                        Протерміновано
+                      </span>
+                    ) : order.is_active ? (
+                      <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-sm">
+                        Активний
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 text-sm">
+                        Повернено
+                      </span>
+                    )}
+
+                    <div className="text-sm">
+                      {order.return_date ? (
+                      <>
+                        {new Date(order.return_date).toLocaleDateString("uk-UA")}{" "}
+                        {new Date(order.return_date).toLocaleTimeString("uk-UA", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </>
+                    ) : (
+                      "Книга не повернена"
+                    )}
+                    </div>
+                    <button
+                      onClick={() => navigate(`/orders/${order.id}`)}
+                      className="text-blue-600 hover:underline cursor-pointer"
+                    >
+                      Деталі ордера
+                    </button>
+
+                  </div>
+
+                </div>
+              );
+            })}
+
+          </div>
+        )}
+      </div>
+      {/* Pagination */}
+        <div className="flex items-center gap-3 mt-5">
+
+        <button
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          Попередня
+        </button>
+
+        <span>
+          Сторінка {page} з {totalPages || 1}
+        </span>
+
+        <button
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          disabled={page >= totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          Наступна
+        </button>
+
+      </div>
+
       {/* Кнопки */}
       <div className="flex flex-col md:flex-row md:justify-between gap-4 pt-6 border-t">
 
@@ -233,7 +425,7 @@ function ReaderDetail() {
         <div className="flex flex-wrap gap-3">
 
           {/* КНОПКА */}
-          {isActive ? (
+          {reader.is_active ? (
             <button
               onClick={() => setModalType('block')}
               className="px-5 py-2 bg-red-600 text-white rounded-lg"
@@ -280,12 +472,9 @@ function ReaderDetail() {
                     Блокування читача
                   </h2>
 
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="border px-3 py-2 w-full rounded mb-4"
-                  />
+                  <p className="mb-6">
+                    Ви дійсно бажаєте заблокувати цього читача?
+                  </p>
 
                   <div className="flex justify-end gap-3">
                     <button
@@ -351,7 +540,7 @@ function ReaderDetail() {
         </div>
 
         {/* Небезпечна дія */}
-        {!isActive && (
+        {!reader.is_active && reader.end_date && orders.length === 0 && (
           <button
             onClick={handleDelete}
             className="px-5 py-2 rounded-lg bg-red-700 hover:bg-red-800 text-white font-medium transition"

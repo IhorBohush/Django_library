@@ -56,7 +56,8 @@ function CreateOrder() {
         axiosInstance
         .get(`/users/readers/?search=${search}`)
         .then(res => {
-            setFilteredUsers(res.data.results || res.data);
+            const activeUsers = res.data.results?.filter(user => user.is_active) || res.data.filter(user => user.is_active);
+            setFilteredUsers(activeUsers);
         })
         .catch(console.error);
     }, 400); // debounce

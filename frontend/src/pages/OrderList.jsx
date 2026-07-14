@@ -123,7 +123,7 @@ useEffect(() => {
 
       <div className="bg-white border rounded-lg p-4 shadow-sm">
         <p className="text-gray-500 text-sm">
-          Прострочені
+          Протерміновані
         </p>
 
         <p className="text-3xl font-bold text-red-600">
@@ -293,7 +293,7 @@ useEffect(() => {
 
                     {isOverdue ? (
                       <span className="px-2 py-1 rounded-full text-sm bg-red-100 text-red-700">
-                        Прострочено
+                        Протерміновано
                       </span>
                     ) : order.is_active ? (
                       <span className="px-2 py-1 rounded-full text-sm bg-green-100 text-green-700">

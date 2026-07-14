@@ -17,6 +17,16 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
+// axiosInstance.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("access");
+
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+
+//   return config;
+// });
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -27,7 +37,7 @@ axiosInstance.interceptors.response.use(
         const refresh = localStorage.getItem("refresh");
         const res = await axios.post(`${API_URL}/token/refresh/`, { refresh });
         localStorage.setItem("access", res.data.access);
-        axiosInstance.defaults.headers.Authorization = `Bearer ${res.data.access}`;
+        originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
         return axiosInstance(originalRequest);
       } catch (err) {
         localStorage.removeItem("access");

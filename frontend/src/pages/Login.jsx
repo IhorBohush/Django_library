@@ -8,27 +8,24 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { getUser } = useContext(AuthContext);
+  const { loginUser } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    // 1. Отримуємо токени
-    const response = await axiosInstance.post("login/", { email, password });
-    localStorage.setItem("access", response.data.access);
-    localStorage.setItem("refresh", response.data.refresh);
+    e.preventDefault();
 
-    // 2. Отримуємо профіль користувача
-    const userRes = await axiosInstance.get("users/profile/", {
-      headers: { Authorization: `Bearer ${response.data.access}` },
-    });
-    localStorage.setItem("user", JSON.stringify(userRes.data));
+    try {
+      const response = await axiosInstance.post("/login/", { email, password });
 
-    navigate("/profile");
-  } catch (err) {
-    alert("Невірний email або пароль");
-  }
-};
+      localStorage.setItem("access", response.data.access);
+      localStorage.setItem("refresh", response.data.refresh);
+
+      await loginUser();
+      navigate("/profile");
+
+    } catch (err) {
+      alert("Невірний email або пароль");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

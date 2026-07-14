@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-export default function Navbar() {
+function Navbar() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -90,3 +90,5 @@ export default function Navbar() {
     </nav>
   );
 }
+
+export default Navbar;
