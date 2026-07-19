@@ -2,12 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import axiosInstance from "../api/axios";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
+  const [categories, setCategories] = useState([]);
 
   // Закривати dropdown при кліку поза ним
   useEffect(() => {
@@ -19,6 +21,19 @@ function Navbar() {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axiosInstance.get("/categories/");
+        setCategories(res.data.results);
+        } catch (error) {
+          console.error("Помилка завантаження категорій:", error);
+        }
+      };
+
+    fetchCategories();
   }, []);
 
   return (
@@ -40,18 +55,21 @@ function Navbar() {
 
             {open && (
               <div className="absolute top-10 left-0 z-50 bg-white text-black rounded-xl shadow-xl p-4 flex flex-col gap-2 min-w-55">
-                <Link to="/categories/fiction" className="hover:text-sky-600">
-                  Художня література
+                <Link
+                  to="/books"
+                  className="hover:text-sky-600"
+                >
+                  Всі книги
                 </Link>
-                <Link to="/categories/education" className="hover:text-sky-600">
-                  Навчальна література
-                </Link>
-                <Link to="/categories/history" className="hover:text-sky-600">
-                  Історія
-                </Link>
-                <Link to="/categories/science" className="hover:text-sky-600">
-                  Наука
-                </Link>
+                {categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={`/books?category=${category.id}`}
+                    className="hover:text-sky-600"
+                  >
+                    {category.name}
+                  </Link>
+                ))}
               </div>
             )}
           </div>

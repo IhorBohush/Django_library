@@ -1,32 +1,30 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axiosInstance from "../api/axios";
+import { AuthContext } from "../context/AuthContext";
 
 function BooksList() {
-  const [user, setUser] = useState(null);
+  const { user } = useContext(AuthContext);
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [searchParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [cat, setCat] = useState("");
   const navigate = useNavigate();
+  const category = searchParams.get("category");
+  // const search = searchParams.get("search") || "";
 
-  useEffect(() => {
-    axiosInstance.get(`/users/profile/`)
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
 
   useEffect(() => {
     setLoading(true);
 
-    const query = search
-      ? `?search=${search}&page=${page}`
-      : `?page=${page}`;
+    const query = `?page=${page}${
+      search ? `&search=${search}` : ""
+    }${
+      category ? `&category=${category}` : ""
+    }`;
 
     axiosInstance
       .get(`/books/${query}`)
@@ -41,7 +39,7 @@ function BooksList() {
       })
       .finally(() => setLoading(false));
 
-  }, [search, page]);
+  }, [search, page, category]);
 
     {loading && (
       <div className="text-sm text-gray-500 mb-2">
@@ -49,13 +47,29 @@ function BooksList() {
       </div>
     )}
 
+  useEffect(() => {
+    if (category) {
+      axiosInstance.get(`/categories/${category}/`)
+        .then((response) => {
+          setCat(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    else {
+      setCat("");
+    }
+  }, [category]);
+
+
   return (
   <div className="p-10">
 
     {/* 🔹 Header */}
     <div className="flex justify-between items-center mb-8">
       <h1 className="text-3xl font-bold text-gray-800">
-        Книги
+        Книги {cat ? `з категорії: ${cat.name}` : ""}
       </h1>
 
       {user?.role === 'librarian' && (

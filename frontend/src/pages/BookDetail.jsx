@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axios";
+import { AuthContext } from "../context/AuthContext";
 
 function BookDetail() {
   const { id } = useParams();
@@ -8,17 +9,12 @@ function BookDetail() {
 
   const [book, setBook] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
-  const [user, setUser] = useState(null);
+  const { user } = useContext(AuthContext);
   const [copies, setCopies] = useState([]);
   const [copyNumber, setCopyNumber] = useState("");
   const [activeCopyId, setActiveCopyId] = useState(null);
 
   useEffect(() => {
-    // отримати користувача
-    axiosInstance.get("/users/profile/")
-      .then(res => setUser(res.data))
-      .catch(() => setUser(null));
-
     // отримати книгу
     axiosInstance.get(`/books/${id}/`)
       .then(res => {

@@ -29,7 +29,7 @@ class BookViewSet(viewsets.ModelViewSet):
         OrderingFilter,
     ]
 
-    filterset_fields = ["title", "author", "category"]
+    filterset_fields = ["category"]
     search_fields = ["title", "author", "isbn"]
     ordering_fields = ["title", "published_year"]
     ordering = ["-created_at"]
@@ -37,7 +37,6 @@ class BookViewSet(viewsets.ModelViewSet):
 
 class BookCopyViewSet(viewsets.ModelViewSet):
     serializer_class = BookCopySerializer
-    permission_classes = [IsLibrarian]
     pagination_class = None
 
     def get_queryset(self):
@@ -48,6 +47,11 @@ class BookCopyViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(book_id=book_id)
 
         return queryset
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [AllowAny()]
+        return [IsLibrarian()]
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
