@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (CreateLibrarianView, CreateReaderView, CurrentUserView, SetupPasswordView, UpdateLibrarianCredentialsView, UpdateReaderView, 
                     UpdateLibrarianView, UpdateReaderCredentialsView, UpdateReaderActiveStatusView, ProfileView, ReaderDetailView,
-                    LibrarianDetailView, ReadersListView, LibrariansListView, ReaderDeleteView, LibrarianDeleteView, LogoutView, ActorsChoicesView)
+                    LibrarianDetailView, ReadersListView, LibrariansListView, ReaderDeleteView, LibrarianDeleteView, LogoutView, ActorsChoicesView,
+                    ReadersStatsView)
 
 urlpatterns = [
     path('create-librarian/', CreateLibrarianView.as_view(), name='create-librarian'),
@@ -22,4 +23,5 @@ urlpatterns = [
     path('me/', CurrentUserView.as_view(), name='current-user'),
     path("logout/", LogoutView.as_view(), name="logout"),
     path('actors-choices/', ActorsChoicesView.as_view(), name='actors-choices'),
+    path('readers-stats/', ReadersStatsView.as_view(), name='readers-stats'),
 ]

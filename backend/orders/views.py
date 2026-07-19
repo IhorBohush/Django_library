@@ -68,6 +68,7 @@ class OrderDeleteView(APIView):
         
 
 class OrdersStatsView(APIView):
+    permission_classes = [IsLibrarian]
     
     def get(self, request):
         total_orders = Order.objects.count()

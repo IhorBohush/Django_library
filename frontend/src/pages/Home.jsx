@@ -40,10 +40,10 @@ export default function Hero() {
     </div>
 
     <Link
-      to="/categories/fiction"
+      to="/books"
       className="bg-sky-500 hover:bg-sky-600 px-6 py-3 rounded-xl text-lg font-semibold transition shadow-lg"
     >
-      Переглянути категорії
+      Переглянути книги
     </Link>
   </div>
 </section>

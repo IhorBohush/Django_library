@@ -225,3 +225,27 @@ class ActorsChoicesView(APIView):
         return Response({
             "actor_types": actor_choices
         })
+    
+
+class ReadersStatsView(APIView):
+    
+    def get(self, request):
+        readers = User.objects.filter(role=RoleChoices.READER)
+
+        total_readers = readers.count()
+        active = readers.filter(is_active=True).count()
+        students = readers.filter(
+            is_active=True,
+            actor_type=ActorChoices.STUDENT
+        ).count()
+        staff = readers.filter(
+            is_active=True,
+            actor_type=ActorChoices.STAFF
+        ).count()
+
+        return Response({
+            "total_readers": total_readers,
+            "active_readers": active,
+            "students": students,
+            "staff": staff
+        })

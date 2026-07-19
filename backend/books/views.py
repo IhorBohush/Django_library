@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from users.permissions import IsLibrarian
@@ -64,3 +65,16 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
     permission_classes = [IsLibrarian]
+
+
+class BooksStatsView(APIView):
+    
+    def get(self, request):
+        total_books = BookCopy.objects.count()
+        not_available = BookCopy.objects.filter(is_available=False).count()
+
+        return Response({
+            "total_books": total_books,
+            "not_available": not_available
+        })
+    
