@@ -33,6 +33,7 @@ urlpatterns = [
     path('api/', include('categories.urls')),
     path('api/', include('orders.urls')),
     path('api/', include('uploads.urls')),
+    path('api/', include('about.urls')),
 ]
 
 if settings.DEBUG:

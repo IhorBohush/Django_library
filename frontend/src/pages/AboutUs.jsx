@@ -23,6 +23,12 @@ function About() {
     students: 0,
     staff: 0,
   });
+  const [about, setAbout] = useState({
+    about_librarian: "",
+    librarian_photo: null,
+    librarian_first_name: "",
+    librarian_last_name: "",
+  });
 
   useEffect(() => {
     Promise.all([
@@ -39,6 +45,19 @@ function About() {
       })
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    axiosInstance
+      .get("/about/")
+      .then((res) => {
+        const data = res.data.results || res.data;
+        if (data.length > 0) {
+        const about = data[0];
+        setAbout(about);}
+      })
+      .catch(console.error);
+  }, []);
+
 
   return (
     <div className="bg-gray-50">
@@ -239,7 +258,15 @@ function About() {
               <div className="bg-gray-200 min-h-105 flex items-center justify-center">
 
                 <span className="text-gray-500 text-xl">
-                  Тут буде фотографія бібліотекаря
+                  {about.librarian_photo ? (
+                    <img
+                      src={about.librarian_photo.file}
+                      alt="Бібліотекар"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>Фото не завантажено</span>
+                  )}
                 </span>
 
               </div>
@@ -247,15 +274,12 @@ function About() {
               <div className="p-12 flex flex-col justify-center">
 
                 <h3 className="text-3xl font-bold mb-6">
-                  Ім'я бібліотекаря
+                  {about.librarian_first_name} {about.librarian_last_name}
                 </h3>
 
                 <p className="text-gray-600 leading-8 text-lg">
 
-                  Тут буде коротка інформація про бібліотекаря.
-                  У майбутньому цей блок можна повністю заповнювати
-                  через адміністративну панель:
-                  фотографія, ім'я, посада, опис та контакти.
+                  {about.about_librarian || "Інформація про бібліотекаря відсутня."}
 
                 </p>
 

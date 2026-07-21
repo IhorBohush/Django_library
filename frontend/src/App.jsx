@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 import Home from "./pages/Home";
-import About from "./pages/About";
+import AboutUs from "./pages/AboutUs";
 import Contacts from "./pages/Contacts";
 import Categories from "./pages/Categories";
 
@@ -31,6 +31,7 @@ import EditBook from "./pages/BookUpdate";
 import CreateOrder from "./pages/CreateOrder";
 import ListOrders from "./pages/OrderList";
 import DetailOrder from "./pages/OrderDetail";
+import ManageAbout from "./pages/ManageAbout";
 
 function App() {
   return (
@@ -43,7 +44,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/categories/:categoryName" element={<Categories />} />
         <Route path="/login" element={<Login />} />
@@ -145,6 +146,11 @@ function App() {
           <ProtectedRoute allowedRoles="librarian">
             <DetailOrder />
           </ProtectedRoute>    
+        } />
+        <Route path="/manage-about" element={
+          <ProtectedRoute allowedRoles="librarian">
+            <ManageAbout />
+          </ProtectedRoute>
         } />
       </Routes>
       </main>

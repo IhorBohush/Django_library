@@ -355,6 +355,21 @@ function Profile() {
             </div>
           </div>
 
+          {/* 🏛 Про бібліотеку */}
+          <div className="bg-white shadow-md rounded-2xl p-5 hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold mb-3 text-sky-700">
+              Про бібліотеку
+            </h3>
+
+            <div className="space-y-2">
+              <Link to="/manage-about">
+                <div className="p-3 bg-sky-50 hover:bg-sky-100 rounded-lg cursor-pointer transition">
+                  🏛 Керування інформацією
+                </div>
+              </Link>
+            </div>
+          </div>
+
         </div>
       </div>
     )}

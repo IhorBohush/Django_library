@@ -74,7 +74,7 @@ function Navbar() {
             )}
           </div>
 
-          <Link to="/about" className="hover:text-sky-400 transition">
+          <Link to="/about-us" className="hover:text-sky-400 transition">
             Про нас
           </Link>
 

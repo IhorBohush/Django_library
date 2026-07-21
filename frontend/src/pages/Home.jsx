@@ -1,8 +1,25 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axiosInstance from "../api/axios";
 
 export default function Hero() {
   const [offsetY, setOffsetY] = useState(0);
+  const [about, setAbout] = useState({
+    institution_name: "",
+    description: "",
+  });
+
+  useEffect(() => {
+    axiosInstance
+      .get("/about/")
+      .then((res) => {
+        const data = res.data.results || res.data;
+        if (data.length > 0) {
+        const about = data[0];
+        setAbout(about);}
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setOffsetY(window.scrollY);
@@ -10,6 +27,7 @@ export default function Hero() {
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
 
   return (
     <section className="relative min-h-screen flex items-center justify-center">
@@ -29,22 +47,23 @@ export default function Hero() {
 
     <div className="inline-block bg-black/40 px-4 py-2 rounded-2xl">
     <h2 className="text-2xl md:text-3xl font-extrabold text-sky-300 drop-shadow-md mb-6">
-      ДНЗ "Полонський агропромисловий центр професійної освіти"
+      {about.institution_name || "Електронна бібліотека"}
     </h2>
     
 
     <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-200 drop-shadow-sm mb-8">
-      Сучасна електронна бібліотека для студентів та викладачів.
-      Пошук книг, категорії та доступ до навчальних матеріалів в одному місці.
+      {about.description || "Сучасна інформаційна система для швидкого пошуку книг, ведення електронного обліку літератури та комфортного користування бібліотечним фондом."}
     </p>
     </div>
 
+    <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-200 drop-shadow-sm mb-8">
     <Link
       to="/books"
       className="bg-sky-500 hover:bg-sky-600 px-6 py-3 rounded-xl text-lg font-semibold transition shadow-lg"
     >
       Переглянути книги
     </Link>
+    </p>
   </div>
 </section>
   );

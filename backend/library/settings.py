@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'professions',
     'orders',
     'uploads',
+    'about',
     'corsheaders',
     'django_filters'
 ]
