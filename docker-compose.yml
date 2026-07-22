@@ -1,0 +1,112 @@
+services:
+
+  db:
+    image: postgres:16
+
+    container_name: library_db
+
+    restart: unless-stopped
+
+    env_file:
+      - backend/.env.docker
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - library_network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d library_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    logging:
+
+      options:
+
+        max-size: "10m"
+
+        max-file: "3"
+
+  backend:
+
+    build:
+      context: ./backend
+
+    container_name: library_backend
+
+    restart: unless-stopped
+
+    env_file:
+      - backend/.env.docker
+
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    networks:
+      - library_network
+
+    logging:
+
+      options:
+
+        max-size: "10m"
+
+        max-file: "3"
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+
+    container_name: library_nginx
+
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      backend:
+        condition: service_started
+
+    volumes:
+      - static_volume:/static
+      - media_volume:/media
+
+    networks:
+      - library_network
+
+    logging:
+
+      options:
+
+        max-size: "10m"
+
+        max-file: "3"
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  library_network:
+    driver: bridge
