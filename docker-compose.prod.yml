@@ -1,0 +1,56 @@
+services:
+  db:
+    env_file:
+      - backend/.env.docker.prod
+
+  backend:
+    env_file:
+      - backend/.env.docker.prod
+
+    healthcheck:
+      test:
+        ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+
+    container_name: library_frontend_builder
+
+    command: >
+      sh -c "
+      rm -rf /frontend_dist/* &&
+      cp -r /app/dist/. /frontend_dist/
+      "
+
+    volumes:
+      - frontend_dist:/frontend_dist
+
+    restart: "no"
+
+    networks:
+      - library_network
+
+  nginx:
+    ports:
+      - "80:80"
+
+    volumes:
+      - static_volume:/static:ro
+      - media_volume:/media:ro
+      - frontend_dist:/usr/share/nginx/html:ro
+
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_completed_successfully
+
+    restart: unless-stopped
