@@ -11,9 +11,17 @@ __pycache__/
 venv/
 env/
 
-.env
-.env.docker
-.env.production
+# Backend environment files
+backend/.env
+backend/.env.docker.dev
+backend/.env.docker.prod
+
+# Frontend local environment files
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.production.local
+frontend/.env.development
+frontend/.env.production
 
 db.sqlite3
 
