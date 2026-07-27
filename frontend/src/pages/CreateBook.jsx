@@ -63,46 +63,44 @@ function CreateBook() {
     e.preventDefault();
 
     try {
-      // 1️⃣ Створюємо книгу
       const bookRes = await axiosInstance.post("/books/", formData);
       const bookId = bookRes.data.id;
 
-      // 2️⃣ Завантажуємо всі файли
-      for (let item of files) {
-        const formDataFile = new FormData();
+      for (let item of files) { 
+        const formDataFile = new FormData(); 
         formDataFile.append("file", item.file);
 
-        const uploadRes = await axiosInstance.post(
-          "/uploads/create/",
-          formDataFile,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
+        const uploadRes = await axiosInstance.post( 
+          "/uploads/create/", 
+          formDataFile, 
+          { 
+            headers: { "Content-Type": "multipart/form-data" }, 
+          } 
         );
-
+        
         const uploadId = uploadRes.data.id;
 
-        // 🔥 визначаємо тип
-        const type = item.file.type.startsWith("image")
-          ? "cover"
-          : "file";
+        // 🔥 визначаємо тип 
+        const type = item.file.type.startsWith("image") 
+        ? "cover" 
+        : "file";
 
-        // 3️⃣ Attachment
-        await axiosInstance.post("/attachments/", {
-          upload_id: uploadId,
-          book: bookId,
-          type: type,
-        });
-      }
+        // 3️⃣ Attachment 
+        await axiosInstance.post("/attachments/", 
+          { upload_id: uploadId, 
+            book: bookId, 
+            type: type, 
+          }); 
+        }
 
-      alert("Книгу створено ✅");
-      navigate("/books");
+        alert("Книгу створено ✅"); 
+        navigate("/books");
 
-    } catch (err) {
-      console.log(err.response?.data || err.message);
-      alert("Помилка");
-    }
-  };
+        } catch (err) { 
+          console.log(err.response?.data || err.message); 
+          alert("Помилка"); 
+        } 
+      };
 
   return (
     <div className="flex justify-center mt-10">
