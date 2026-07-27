@@ -181,7 +181,7 @@ class ReaderDeleteView(APIView):
 
     def delete(self, request, id):
         user = get_object_or_404(User, pk=id, role=RoleChoices.READER)
-        if user.order or user.is_active:
+        if user.user_orders.exists() or user.is_active:
             return Response({"detail": "Cannot delete an active reader"}, status=status.HTTP_400_BAD_REQUEST)
         user.delete()
         return Response({"detail": "Reader deleted successfully"}, status=status.HTTP_204_NO_CONTENT)

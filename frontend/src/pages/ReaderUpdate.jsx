@@ -30,7 +30,7 @@ function EditReader() {
           middle_name: res.data.middle_name || "",
           phone_number: res.data.phone_number || "",
           actor_type: res.data.actor_type || "",
-          profession: res.data.profession || "",
+          profession: res.data.profession_name || "",
           graduation_date: res.data.graduation_date || ""
         });
       } catch (error) {
