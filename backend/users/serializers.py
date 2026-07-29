@@ -65,6 +65,7 @@ class CreateReaderSerializer(serializers.ModelSerializer):
         actor_type = validated_data.get('actor_type')
         if actor_type != ActorChoices.STUDENT:
             validated_data['profession'] = None
+            validated_data['graduation_date'] = None
 
         password = validated_data.pop('password', None)
         if password:
@@ -106,6 +107,14 @@ class UpdateReaderSerializer(serializers.ModelSerializer):
             'profession',
             'graduation_date'
         ]
+
+    def update(self, instance, validated_data):
+        actor_type = validated_data.get('actor_type', instance.actor_type)
+        if actor_type != ActorChoices.STUDENT:
+            validated_data['profession'] = None
+            validated_data['graduation_date'] = None
+
+        return super().update(instance, validated_data)
 
 
 class UpdateLibrarianSerializer(serializers.ModelSerializer):

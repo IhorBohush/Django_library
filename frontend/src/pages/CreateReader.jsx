@@ -11,7 +11,7 @@ function CreateReader() {
     phone_number: "",
     actor_type: "",
     profession: "",
-    graduation_date: ""
+    graduation_date: null
   });
 
   const [user, setUser] = useState(null);
@@ -238,19 +238,21 @@ function CreateReader() {
                 </div>
                 )}
 
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">
-                Дата закінчення навчання
-            </label>
+          {formData.actor_type === "student" && (
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">
+                  Дата закінчення навчання
+              </label>
 
-            <input
-                type="date"
-                name="graduation_date"
-                value={formData.graduation_date}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-            </div>
+              <input
+                  type="date"
+                  name="graduation_date"
+                  value={formData.graduation_date}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              </div>
+          )}
           </div>
 
           <input

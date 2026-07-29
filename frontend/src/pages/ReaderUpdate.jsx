@@ -6,6 +6,7 @@ function EditReader() {
   const { id } = useParams();
   const [reader, setReader] = useState(null);
   const [actorChoices, setActorChoices] = useState([]);
+  const [professions, setProfessions] = useState([]);
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ function EditReader() {
           phone_number: res.data.phone_number || "",
           actor_type: res.data.actor_type || "",
           profession: res.data.profession_name || "",
-          graduation_date: res.data.graduation_date || ""
+          graduation_date: res.data.graduation_date || null
         });
       } catch (error) {
         console.error(error);
@@ -57,6 +58,24 @@ function EditReader() {
   ...actorChoices.filter(c => c.value === formData.actor_type),
   ...actorChoices.filter(c => c.value !== formData.actor_type),
 ];
+
+  useEffect(() => {
+    const fetchProfessions = async () => {
+      try {
+        const response = await axiosInstance.get("/professions/");
+        setProfessions(response.data.results || response.data);
+      } catch (error) {
+        console.error("Помилка отримання professions", error);
+      }
+    };
+
+    fetchProfessions();
+  }, []);
+
+  const sortedProfessions = [
+  ...professions.filter(p => p.name === formData.profession),
+  ...professions.filter(p => p.name !== formData.profession),
+  ]
 
   // Обробка зміни полів
   const handleChange = (e) => {
@@ -144,26 +163,37 @@ function EditReader() {
           </select>
         </div>
 
-        <div className="flex flex-col">
-          <label className="text-sm text-gray-600 mb-1">Професія</label>
-          <input
-            name="profession"
-            value={formData.profession}
-            onChange={handleChange}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        {formData.actor_type === "student" && (
+          <div className="flex flex-col">
+            <label className="text-sm text-gray-600 mb-1">Професія</label>
+            <select
+              name="profession"
+              value={formData.profession}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Оберіть професію</option>
+              {sortedProfessions.map((profession) => (
+                <option key={profession.id} value={profession.id}>
+                  {profession.name}
+                </option>
+              ))}
+                </select>
+          </div>
+        )}
 
-        <div className="flex flex-col col-span-2">
-          <label className="text-sm text-gray-600 mb-1">Дата випуску</label>
-          <input
-            name="graduation_date"
-            type="date"
-            value={formData.graduation_date}
-            onChange={handleChange}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        {formData.actor_type === "student" && (
+          <div className="flex flex-col col-span-2">
+            <label className="text-sm text-gray-600 mb-1">Дата випуску</label>
+            <input
+              name="graduation_date"
+              type="date"
+              value={formData.graduation_date}
+              onChange={handleChange}
+              className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        )}
 
         <div className="col-span-2 flex justify-end gap-3 mt-4">
 
