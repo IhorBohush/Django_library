@@ -144,7 +144,7 @@ function BooksList() {
 
                 {book.isbn && (
                   <span className="text-xs">
-                    ISBN
+                    {book.isbn}
                   </span>
                 )}
 
