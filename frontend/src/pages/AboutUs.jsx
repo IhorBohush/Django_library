@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axios";
 import CountUp from "react-countup";
+import SEO from "../components/SEO";
 
 import {
   BookOpenIcon,
@@ -28,6 +29,7 @@ function About() {
     librarian_photo: null,
     librarian_first_name: "",
     librarian_last_name: "",
+    institution_name: "",
   });
 
   useEffect(() => {
@@ -60,6 +62,11 @@ function About() {
 
 
   return (
+    <>
+    <SEO
+      title="Про нас"
+      description={`Інформація про бібліотеку ${about.institution_name}`}
+    />
     <div className="bg-gray-50">
 
       {/* Hero */}
@@ -294,7 +301,7 @@ function About() {
       </section>
 
     </div>
-  );
+  </>);
 }
 
 function StatCard({ icon, value, label }) {

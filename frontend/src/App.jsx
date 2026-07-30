@@ -5,7 +5,6 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import Contacts from "./pages/Contacts";
-import Categories from "./pages/Categories";
 
 import Login from "./pages/Login";
 import CreateLibrarian from "./pages/CreateLibrarian";
@@ -46,7 +45,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contacts" element={<Contacts />} />
-        <Route path="/categories/:categoryName" element={<Categories />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-librarian" element={
           <ProtectedRoute allowedRoles="superuser">

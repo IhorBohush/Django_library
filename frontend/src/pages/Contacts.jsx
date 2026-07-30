@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axios";
+import SEO from "../components/SEO";
 
 import {
   PhoneIcon,
@@ -45,6 +46,11 @@ function Contacts() {
   }
 
   return (
+    <>
+    <SEO
+      title="Контакти"
+      description={`Контакти бібліотеки ${about.institution_name}`}
+    />
     <div className="bg-gray-50 min-h-screen">
 
       {/* Hero */}
@@ -217,7 +223,7 @@ function Contacts() {
       )}
 
     </div>
-  );
+  </>);
 }
 
 function ContactItem({

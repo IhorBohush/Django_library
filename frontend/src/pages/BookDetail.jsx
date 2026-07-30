@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
+import SEO from "../components/SEO";
 
 function BookDetail() {
   const { id } = useParams();
@@ -86,6 +87,11 @@ function BookDetail() {
   const unavailableCopies = copies.filter(c => !c.is_available);
 
   return (
+    <>
+    <SEO
+      title={book.title}
+      description={book.description}
+    />
     <div className="p-6 md:p-10 max-w-6xl mx-auto">
 
       <div className="bg-white shadow-xl rounded-3xl p-6 md:p-10">
@@ -317,7 +323,7 @@ function BookDetail() {
       </div>
 
     </div>
-  );
+  </>);
 }
 
 export default BookDetail;

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axios";
+import SEO from "../components/SEO";
 
 export default function Hero() {
   const [offsetY, setOffsetY] = useState(0);
@@ -30,6 +31,11 @@ export default function Hero() {
 
 
   return (
+    <>
+      <SEO
+        title={`Бібліотека ${about.institution_name}`}
+        description={about.description}
+      />
     <section className="relative min-h-screen flex items-center justify-center">
   {/* Фонове зображення зафіксоване */}
   <div
@@ -66,5 +72,5 @@ export default function Hero() {
     </p>
   </div>
 </section>
-  );
+  </>);
 }
