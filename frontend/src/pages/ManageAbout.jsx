@@ -86,10 +86,12 @@ function ManageAbout() {
           about_librarian: about.about_librarian || "",
           map: about.map || "",
 
-          librarian_photo: about.librarian_photo,
+          librarian_photo: about.librarian_photo?.id || null,
         });
 
-        if (about.librarian_photo?.file) {
+        if (about.librarian_photo?.file_url) {
+          setPreview(about.librarian_photo.file_url);
+        } else if (about.librarian_photo?.file) {
           setPreview(about.librarian_photo.file);
         }
       }
@@ -118,25 +120,21 @@ function ManageAbout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setSaving(true);
 
     try {
-      let uploadId = formData.librarian_photo;
+      let uploadId =
+        typeof formData.librarian_photo === "object"
+          ? formData.librarian_photo?.id
+          : formData.librarian_photo;
 
       if (photo) {
         const uploadForm = new FormData();
-
         uploadForm.append("file", photo);
 
         const uploadRes = await axiosInstance.post(
           "/uploads/create/",
-          uploadForm,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+          uploadForm
         );
 
         uploadId = uploadRes.data.id;
@@ -144,23 +142,20 @@ function ManageAbout() {
 
       const payload = {
         ...formData,
-        librarian_photo: uploadId,
+        librarian_photo: uploadId || null,
       };
 
       if (aboutId) {
-        await axiosInstance.put(`/about/${aboutId}/`, payload);
-
+        await axiosInstance.patch(`/about/${aboutId}/`, payload);
         alert("Інформацію успішно оновлено.");
       } else {
         await axiosInstance.post("/about/", payload);
-
         alert("Інформацію успішно створено.");
       }
 
       navigate("/contacts");
     } catch (err) {
-      console.error(err.response?.data || err);
-
+      console.error("About save error:", err.response?.data || err);
       alert("Сталася помилка.");
     } finally {
       setSaving(false);
